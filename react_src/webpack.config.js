@@ -1,40 +1,39 @@
-/*
-    ./webpack.config.js
-*/
-const path = require('path');
-
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: './client/index.html',
-  filename: 'index.html',
-  inject: 'body'
-})
-
-
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+var path = require('path');
 module.exports = {
-  entry: './client/index.js',
-  output: {
-    path: path.resolve('../web/public/'),
-    filename: 'index_bundle.js'
-  },
   module: {
     rules: [
-      { test: /\.css$/,
-        use: [
-          { loader: "style-loader" },
-          { loader: "css-loader" }
-        ]
-      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: "babel-loader"
-      }, {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: "babel-loader"
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: "html-loader",
+            options: { minimize: true }
+          }
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"]
       }
     ]
   },
-  plugins: [HtmlWebpackPluginConfig]
-}
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: "./client/index.html",
+      filename: 'index.html'
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ]
+};
